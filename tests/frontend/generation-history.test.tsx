@@ -797,6 +797,29 @@ it('shows total count hint when truncated, loads full history on drawer scroll o
  expect(lastTasksCall?.[0]).toHaveLength(2)
 })
 
+it('passes only the recent response as recentTasks on scheduled polls after loading full history', async () => {
+ vi.useFakeTimers()
+ try {
+  const older = { ...completed, id: 'older', createdAt: '2026-04-01T00:00:00.000Z' }
+  const latest = { ...completed, id: 'latest', createdAt: '2026-11-01T00:00:00.000Z' }
+  const fetch = vi.fn()
+   .mockResolvedValueOnce(Response.json({ tasks: [completed], error: null, hasMore: true }))
+   .mockResolvedValueOnce(Response.json({ tasks: [completed, older], error: null }))
+   .mockResolvedValueOnce(Response.json({ tasks: [latest, completed], error: null, hasMore: true }))
+  vi.stubGlobal('fetch', fetch)
+  const onTasks = vi.fn()
+  render(<GenerationHistory works={<div/>} revision={0} requestFull onTasks={onTasks} onResult={()=>{}} onPreview={()=>{}} onDraft={()=>{}} onContinue={async()=>{}} onSaveRecipe={async()=>{}}/>)
+
+  await act(async () => {})
+  expect(onTasks).toHaveBeenLastCalledWith([completed, older], { fullHistory: true })
+
+  await act(async () => { await vi.advanceTimersByTimeAsync(2000) })
+  expect(fetch).toHaveBeenCalledTimes(3)
+  expect(fetch).toHaveBeenLastCalledWith('/api/generation-tasks?limit=60', expect.anything())
+  expect(onTasks).toHaveBeenLastCalledWith([completed, older, latest], { recentTasks: [latest, completed] })
+ } finally { cleanup();vi.useRealTimers() }
+})
+
 it('loads full history when requestFull is enabled externally for GeneratePage infinite scroll', async () => {
  const older = { ...completed, id: 'older-2', createdAt: '2026-04-01T00:00:00.000Z', input: { ...completed.input, prompt: '外部触发加载的旧记录' } }
  const fetch = vi.fn(async (url: string) => url.endsWith('?limit=60')

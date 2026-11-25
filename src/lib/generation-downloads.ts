@@ -32,6 +32,8 @@ type Options = {
 /** A page observes new work; an initial snapshot never downloads old successes. */
 export class GenerationDownloads {
   private seen: Set<string> | null = null
+  // Full-history IDs remain known even when they are absent from the latest poll.
+  private remembered = new Set<string>()
   private dispatched = new Set<string>()
   private queue: Promise<void> = Promise.resolve()
   private readonly key: string
@@ -77,6 +79,13 @@ export class GenerationDownloads {
     })
   }
 
+  remember(tasks: DownloadTask[]) {
+    const ids = tasks.map(job => job.id)
+    return this.run(() => {
+      for (const id of ids) this.remembered.add(id)
+    })
+  }
+
   observe(tasks: DownloadTask[]) {
     // Poll data must remain a snapshot even if a caller later mutates its list.
     const snapshot = tasks.map(job => ({ id: job.id, status: job.status, deletedAt: job.deletedAt, filename: job.result?.filename }))
@@ -90,7 +99,8 @@ export class GenerationDownloads {
           pending.delete(job.id)
           continue
         }
-        if (!triggered.has(job.id) && (job.status === 'queued' || job.status === 'running' || previous && !previous.has(job.id))) pending.add(job.id)
+        const isNew = previous && !previous.has(job.id) && !this.remembered.has(job.id)
+        if (!triggered.has(job.id) && (job.status === 'queued' || job.status === 'running' || isNew)) pending.add(job.id)
       }
       this.write({ pending: [...pending], triggered: [...triggered] })
       let failure: unknown

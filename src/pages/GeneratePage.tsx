@@ -796,7 +796,7 @@ export default function GeneratePage() {
     return () => window.removeEventListener('online', check)
   }, [pendingKey])
 
-  const handleHistoryTasks = (jobs: GenerationTask[], options?: { fullHistory?: boolean }) => {
+  const handleHistoryTasks = (jobs: GenerationTask[], options?: { fullHistory?: boolean; recentTasks?: GenerationTask[] }) => {
     setRecentTasks(jobs)
     if (options?.fullHistory) {
       const sync = workSync.current
@@ -805,9 +805,11 @@ export default function GeneratePage() {
           if (job.workAssetId) sync.seen.add(job.workAssetId)
         }
       }
+      void autoDownloads.remember(jobs).catch(onDownloadError)
       return
     }
-    syncRecentWorks(jobs)
+    const liveJobs = options?.recentTasks ?? jobs
+    syncRecentWorks(liveJobs)
     const pending = pendingRef.current
     const accepted = pending && jobs.find(job => job.key === pending.key)
     if (pending && accepted) {
@@ -815,9 +817,9 @@ export default function GeneratePage() {
       if (submissionFlight.current?.key === accepted.key) submissionFlight.current.controller.abort()
     }
     if (taskScope) {
-      void autoDownloads.observe(jobs).catch(onDownloadError)
+      void autoDownloads.observe(liveJobs).catch(onDownloadError)
       try {
-        const ids = reconcileQueries(taskScope, jobs)
+        const ids = reconcileQueries(taskScope, liveJobs)
         setPendingQueryIds(previous => JSON.stringify(previous) === JSON.stringify(ids) ? previous : ids)
       } catch { /* Keep unreadable query receipts intact. */ }
     }

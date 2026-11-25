@@ -10,6 +10,29 @@ it('首次历史快照不下载旧完成记录，新出现的成功结果只触�
  const {observer,download}=setup();const d=observer();await d.observe([job('old')]);expect(download).not.toHaveBeenCalled()
  await d.observe([job('old'),job('new')]);await d.observe([job('old'),job('new')]);expect(download.mock.calls).toEqual([['new.png']])
 })
+it('remembers older tasks without enqueueing them, even across polls that omit them', async () => {
+ const {observer,download,values}=setup()
+ const downloads=observer()
+ const recent=job('recent'), older=job('older'), running=job('running','running')
+ await downloads.observe([recent])
+ const initialState=[...values]
+ await downloads.remember([older,running])
+ expect([...values]).toEqual(initialState)
+ expect(download).not.toHaveBeenCalled()
+
+ await downloads.observe([recent])
+ await downloads.observe([recent,older,job('running'),job('new')])
+ expect(download.mock.calls).toEqual([['new.png']])
+})
+
+it('remembering history before the first poll does not change the initial snapshot behavior', async () => {
+ const {observer,download}=setup()
+ const downloads=observer()
+ await downloads.remember([job('older')])
+ await downloads.observe([job('recent')])
+ expect(download).not.toHaveBeenCalled()
+})
+
 it('打开页面时仍在排队的任务成功后下载，失败和取消不下载',async()=>{
  const {observer,download}=setup();const d=observer();await d.observe([job('pending','queued'),job('failure','running'),job('cancel','queued')]);await d.observe([job('pending'),job('failure','failed'),job('cancel','cancelled')]);expect(download.mock.calls).toEqual([['pending.png']])
 })

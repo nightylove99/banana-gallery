@@ -137,7 +137,7 @@ function mergeHistoryTasks(full: GenerationTask[] | null, recent: GenerationTask
  return [...merged.values()]
 }
 
-type Props={works?:ReactNode;hasWork?:(job:GenerationTask)=>boolean;revision:number;requestFull?:boolean;fullRetryKey?:number;onHistoryMeta?:(meta:GenerationHistoryMeta)=>void;onResult:(job:GenerationTask)=>void;onPreview:(job:GenerationTask)=>void;onPreviewReference?:(filename:string,label:string)=>void;onDraft:(job:GenerationTask)=>void;onContinue:(job:GenerationTask)=>Promise<void>;onSaveRecipe:(job:GenerationTask)=>Promise<void>;onTasks?:(tasks:GenerationTask[],options?:{fullHistory?:boolean})=>void;onRetryGeneration?:(job:GenerationTask)=>Promise<void>;onResumeResult?:(job:GenerationTask)=>Promise<void>;onRetrySave?:(job:GenerationTask)=>Promise<void>;pendingQueryIds?:string[];pendingRetryId?:string}
+type Props={works?:ReactNode;hasWork?:(job:GenerationTask)=>boolean;revision:number;requestFull?:boolean;fullRetryKey?:number;onHistoryMeta?:(meta:GenerationHistoryMeta)=>void;onResult:(job:GenerationTask)=>void;onPreview:(job:GenerationTask)=>void;onPreviewReference?:(filename:string,label:string)=>void;onDraft:(job:GenerationTask)=>void;onContinue:(job:GenerationTask)=>Promise<void>;onSaveRecipe:(job:GenerationTask)=>Promise<void>;onTasks?:(tasks:GenerationTask[],options?:{fullHistory?:boolean;recentTasks?:GenerationTask[]})=>void;onRetryGeneration?:(job:GenerationTask)=>Promise<void>;onResumeResult?:(job:GenerationTask)=>Promise<void>;onRetrySave?:(job:GenerationTask)=>Promise<void>;pendingQueryIds?:string[];pendingRetryId?:string}
 export function GenerationHistory({works,hasWork,revision,requestFull=false,fullRetryKey=0,onHistoryMeta,onResult,onPreview,onPreviewReference,onDraft,onContinue,onSaveRecipe,onTasks,onRetryGeneration,onResumeResult,onRetrySave,pendingQueryIds=[],pendingRetryId}:Props){
  const [expanded,setExpanded]=useState(false)
  const listId=useId()
@@ -274,7 +274,7 @@ export function GenerationHistory({works,hasWork,revision,requestFull=false,full
      }
      setCanPurge(!!data.canPurge)
      setCancelUnknown({})
-     onTasksRef.current?.(mergeHistoryTasks(fullTasksRef.current,data.tasks,nextHasMore))
+     onTasksRef.current?.(mergeHistoryTasks(fullTasksRef.current,data.tasks,nextHasMore),{recentTasks:data.tasks})
     }
     setError(serverError)
    } catch(cause) {
