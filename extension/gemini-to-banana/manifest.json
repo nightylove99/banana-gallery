@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini to Banana Gallery",
+  "description": "Save Gemini web images, prompts, and readable references into local Banana Gallery.",
+  "version": "0.4.1",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://gemini.google.com/*",
+    "https://*.googleusercontent.com/*",
+    "https://*.gstatic.com/*",
+    "http://localhost:3333/*",
+    "http://127.0.0.1:3333/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["https://gemini.google.com/*"],
+      "js": ["capture-utils.js", "extractor.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["page-probe.js"],
+      "matches": ["https://gemini.google.com/*"]
+    }
+  ]
+}

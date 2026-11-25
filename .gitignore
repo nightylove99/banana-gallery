@@ -1,0 +1,90 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+dev-dist/
+releases/
+
+# Logs & runtime
+logs/
+*.log
+.banana-gallery.pid
+.banana-gallery.*.pid
+.banana-gallery.profile
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+*.local
+.env
+.env.*
+!.env.example
+!.env.personal-remote.example
+
+# ─── Gallery data ────────────────────────────────────────────────────────────
+# 图片文件不纳入版本控制（体积大）
+public/images/
+public/references/
+# gallery-data.json 按需决定是否追踪：
+# - 追踪：收藏、标签等配置不会丢失
+# - 不追踪：避免频繁变更污染 git history
+gallery-data.json
+.generation-receipts/
+backups/
+recovery/
+# 可重建的本机缩略图等运行缓存
+/cache/
+__pycache__/
+
+# ─── Research / cache ────────────────────────────────────────────────────────
+.firecrawl/
+.playwright-mcp/
+generate-*.png
+参考网站/
+# 正式文档在 doc/；仅忽略本地私密/生成物
+doc/invite-codes-local.md
+doc/cloud/invite-codes-local.md
+
+# ─── macOS ───────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ─── Editor ──────────────────────────────────────────────────────────────────
+.cursor/
+.worktrees/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── TypeScript ──────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+.banana-gallery.qwen.sock
+
+# 本机专属进度状态，不入库（见 AGENTS.md 聚类与进度）
+PROGRESS.local.md
+
+# Durable local acknowledgements for remote ComfyUI output cleanup
+.qwen-output-cleanup/
+
+# Local generation queue and short-lived reference upload receipts
+/generation-tasks.json
+/generation-tasks.json.*.tmp
+/.pending-reference-uploads.json
+/.pending-reference-uploads.json.*.tmp
+
+# Local image-provider credentials and atomic write files
+.provider-config.json
+.provider-config.json.*.tmp
+.vertex-service-account.json
+.vertex-service-account.json.*.tmp

@@ -1,0 +1,11 @@
+{
+  "451": { "class_type": "UNETLoader", "inputs": { "unet_name": "krea2_turbo_fp8_scaled.safetensors", "weight_dtype": "default" } },
+  "453": { "class_type": "CLIPLoader", "inputs": { "clip_name": "qwen3vl_4b_fp8_scaled.safetensors", "type": "krea2", "device": "default" } },
+  "454": { "class_type": "VAELoader", "inputs": { "vae_name": "qwen_image_vae.safetensors" } },
+  "452": { "class_type": "CLIPTextEncode", "inputs": { "clip": ["453", 0], "text": "" } },
+  "455": { "class_type": "ConditioningZeroOut", "inputs": { "conditioning": ["452", 0] } },
+  "456": { "class_type": "EmptyLatentImage", "inputs": { "width": 1024, "height": 1024, "batch_size": 1 } },
+  "458": { "class_type": "KSampler", "inputs": { "model": ["451", 0], "positive": ["452", 0], "negative": ["455", 0], "latent_image": ["456", 0], "seed": 42, "steps": 8, "cfg": 1, "sampler_name": "euler", "scheduler": "simple", "denoise": 1 } },
+  "459": { "class_type": "VAEDecode", "inputs": { "samples": ["458", 0], "vae": ["454", 0] } },
+  "900": { "class_type": "SaveImage", "inputs": { "images": ["459", 0], "filename_prefix": "Krea2/Gallery/preview/result" } }
+}

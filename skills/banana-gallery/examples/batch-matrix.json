@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "defaults": {
+    "provider": "google",
+    "model": "gemini-nano-banana-2.1"
+  },
+  "matrix": {
+    "prompts": [
+      { "id": "studio", "prompt": "Photograph the reference outfit in a bright studio, full body." },
+      { "id": "street", "prompt": "Photograph the reference outfit on an overcast city street, full body." }
+    ],
+    "referenceGroups": [
+      { "id": "coat", "references": ["references/coat.png"], "referenceNotes": ["Use this garment and fabric."] },
+      { "id": "pose", "references": ["references/coat.png", "references/pose.jpg"], "referenceNotes": ["Use this garment and fabric.", "Use this body pose."] }
+    ]
+  }
+}
