@@ -9,6 +9,14 @@
   每张成图自带 <code>#作品编号</code>、原始提示词与有序参考图，网页和你的 Agent 共用同一份本地图库。
 </p>
 
+<p align="center">
+  <img src="doc/screenshots/gallery-overview.webp" alt="Banana Gallery 图库主视图" width="960" />
+</p>
+
+| 大图详情（`#作品编号` + 提示词 + 有序参考图） | 多图并排对比（同主题微调挑片） |
+| :---: | :---: |
+| <img src="doc/screenshots/detail-modal.webp" alt="作品详情弹窗：展示作品编号、提示词与有序参考图" width="470" /> | <img src="doc/screenshots/compare-modal.webp" alt="多图并排对比弹窗：同时对比 3 个候选版本" width="470" /> |
+
 ---
 
 ## 为什么做 Banana Gallery？
